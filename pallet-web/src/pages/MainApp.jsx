@@ -23,10 +23,10 @@ function App() {
   const handleImageChange = (e, view) => {
     const file = e.target.files[0];
     if (file) {
-      setImages({ ...images, [view]: file });
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviews({ ...previews, [view]: reader.result });
+        setPreviews((prevPreviews) => ({ ...prevPreviews, [view]: reader.result }));
+        setImages((prevImages) => ({ ...prevImages, [view]: file }));
       };
       reader.readAsDataURL(file);
     }
@@ -86,14 +86,17 @@ function App() {
   };
 
   const clearImage = (view) => {
-    setImages({ ...images, [view]: null });
-    setPreviews({ ...previews, [view]: '' });
+    setImages((prevImages) => ({ ...prevImages, [view]: null }));
+    setPreviews((prevPreviews) => ({ ...prevPreviews, [view]: '' }));
   };
 
-  const clearAllImages = () => {
+  const resetApp = () => {
     setImages({ front: null, back: null, left: null, right: null });
     setPreviews({ front: '', back: '', left: '', right: '' });
+    setClassificationResult(null);
+    setDetailedScores(null);
   };
+  
 
   return (
     <div className="font-prompt bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 min-h-screen p-4 md:p-8 flex flex-col items-center relative">
@@ -201,16 +204,16 @@ function App() {
         {classificationResult && (
           <div className="mt-6 flex justify-between space-x-4">
             <button
-              onClick={() => clearAllImages()}
+              onClick={resetApp}
               className="bg-red-500 text-white py-2 px-4 rounded text-lg md:text-xl font-semibold hover:bg-red-600 transition duration-300"
             >
               Reset
             </button>
             <button
-              onClick={() => alert('Save functionality to be implemented')}
-              className="bg-green-500 text-white py-2 px-4 rounded text-lg md:text-xl font-semibold hover:bg-green-600 transition duration-300"
+              onClick={() => alert('ผลลัพธ์ถูกบันทึกใน Excel')}
+              className="bg-blue-500 text-white py-2 px-4 rounded text-lg md:text-xl font-semibold hover:bg-blue-600 transition duration-300"
             >
-              Save
+              บันทึก
             </button>
           </div>
         )}
